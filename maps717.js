@@ -23,7 +23,6 @@ const map = new H.Map(document.getElementById('map'), omvlayer, {
     center: { lat: 34.9757823, lng: 138.3770768 },
 });
    //ポリゴン
-	var marker2 = new H.map.Marker({lat:34.979224087406116,lng:138.38327440606042});
 	var rect = new H.map.Rect(new H.geo.Rect(34.97494135812615,138.38445874558198,34.97296093474247,138.38747319195508));
 	var rect1 = new H.map.Rect(new H.geo.Rect(34.97287369719619,138.39070403488952,34.97085363670127,138.39374073582624));
 	var rect2 = new H.map.Rect(new H.geo.Rect(34.98106425333275,138.39077463849736,34.979263851773666,138.39365202327423));
@@ -33,7 +32,6 @@ const map = new H.Map(document.getElementById('map'), omvlayer, {
 	var rect6 = new H.map.Rect(new H.geo.Rect(34.9893755865282,138.38442346799087,34.98751925444427,138.3875752046554));
 	var rect7 = new H.map.Rect(new H.geo.Rect(34.991460210557555,138.38765055408493,34.98960355205701,138.39052845390893));
 
-	map.addObject(marker2);
 	map.addObject(rect);
 	map.addObject(rect1);
 	map.addObject(rect2);
@@ -78,7 +76,7 @@ function addLocationsToMap(result) {
 
      
     
-window.onload = function getRouting() {
+function getRouting() {
     //let origin;
     let destination;
     const onError = (error) => {
@@ -164,6 +162,111 @@ window.onload = function getRouting() {
 router.calculateRoute(routingParameters1, onResult, onError);
 
  };  
+
+
+
+//位置情報
+  function success(pos){
+	origin = pos.coords.latitude + ',' + pos.coords.longitude;
+  	calculateRoute();}
+
+  function fail(pos){
+	alert('位置情報の取得に失敗。エラーコード：検索できません');
+  }
+
+  navigator.geolocation.getCurrentPosition(success,fail); 
+
+
+}
+//ここから二箇所目の避難場所
+function getRouting1() {
+    //let origin;
+    let destination;
+    const onError = (error) => {
+        console.log(error.message);
+	
+    };
+
+    // 経路検索APIを呼び出し
+    const router = platform.getRoutingService(null, 8);
+
+    // APIのリスポンスを処理するためのコールバック関数
+    const onResult = function (result) {
+        // 経路が検索されていることを確保
+        if (result.routes.length) {
+            // 既存の経路を削除する
+            
+
+            result.routes[0].sections.forEach((section) => {
+                // 経路をLinestring方式に変換する
+                const linestring = H.geo.LineString.fromFlexiblePolyline(
+                    section.polyline
+                );
+
+                // 経路をPolyline形式に変換
+                const routeLine = new H.map.Polyline(linestring, {
+                    style: {
+                        strokeColor: 'blue',
+                        lineWidth: 3,
+                    },
+                });
+
+                // 出発地のマーカー
+                const startMarker = new H.map.Marker(
+                    section.departure.place.location
+                );
+
+                // 目的地のマーカー
+                const endMarker = new H.map.Marker(
+                    section.arrival.place.location
+                );
+
+                routeLine.setRemoteId('route');
+                startMarker.setRemoteId('start');
+                endMarker.setRemoteId('dest');
+
+                // マーカーとPolylineを地図上に追加する
+                map.addObjects([routeLine, startMarker, endMarker]);
+            });
+        }
+    };
+
+    const routingParameters = {
+        transportMode: 'pedestrian',
+	
+        // 経路がリスポンスから返されるようにする
+        return: 'polyline',
+    };
+    // 経路を計算するコールバック関数
+    const calculateRoute = () => {
+        // 出発地と到着地点の両方が入力されていることを確保
+      
+ //if (!origin || !destination) return;
+
+        // 出発地と目的地を検索パラメーターに追加
+
+	let routingParameters1 ={
+	'routingMode': 'fast',
+	'transportMode': 'pedestrian',
+	'origin' : origin,
+	'destination': '34.98915049475977,138.37813630452828',
+        'avoid[areas]':['polygon:34.97494135812615,138.38445874558198;34.97494135812615,138.38747319195508;34.97296093474247,138.38747319195508;34.97296093474247,138.38445874558198',
+			'polygon:34.97287369719619,138.39070403488952;34.97287369719619,138.39374073582624;34.97085363670127,138.39374073582624;34.97085363670127,138.39070403488952',
+			'polygon:34.98106425333275,138.39077463849736;34.98106425333275,138.39365202327423;34.979263851773666,138.39365202327423;34.979263851773666,138.39077463849736',
+			'polygon:34.98538113790535,138.3907271615484;34.98538113790535,138.39374175171773;34.983468177276926,138.39374175171773;34.983468177276926,138.3907271615484',
+			'polygon:34.98515007778879,138.38449783935408;34.98515007778879,138.38758086521216;34.98335001891877,138.38758086521216;34.98335001891877,138.38449783935408',
+			'polygon:34.987293891491944,138.38757551186845;34.987293891491944,138.3907956190936;34.98538119872192,138.3907956190936;34.98538119872192,138.38757551186845',
+			'polygon:34.9893755865282,138.38442346799087;34.9893755865282,138.3875752046554;34.98751925444427,138.3875752046554;34.98751925444427,138.38442346799087',
+			'polygon:34.991460210557555,138.38765055408493;34.991460210557555,138.39052845390893;34.98960355205701,138.39052845390893;34.98960355205701,138.38765055408493'
+].join('|'),
+        'return': 'polyline,turnByTurnActions,actions,instructions,travelSummary'
+
+	};
+router.calculateRoute(routingParameters1, onResult, onError);
+
+ };  
+
+
 
 //位置情報
   function success(pos){
