@@ -19,7 +19,7 @@ const omvlayer = new H.map.layer.TileLayer(omvProvider, {
 
 // 地図表示を実装
 const map = new H.Map(document.getElementById('map'), omvlayer, {
-    zoom: 20,
+    zoom: 50,
     center: { lat: 34.9757823, lng: 138.3770768 },
 });
    //ポリゴン
