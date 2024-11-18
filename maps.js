@@ -206,7 +206,7 @@ function getRouting1() {
                 // 経路をPolyline形式に変換
                 const routeLine = new H.map.Polyline(linestring, {
                     style: {
-                        strokeColor: 'blue',
+                        strokeColor: 'red',
                         lineWidth: 3,
                     },
                 });
