@@ -31,6 +31,7 @@ const map = new H.Map(document.getElementById('map'), omvlayer, {
 	var rect5 = new H.map.Rect(new H.geo.Rect(34.987293891491944,138.38757551186845,34.98538119872192,138.3907956190936));
 	var rect6 = new H.map.Rect(new H.geo.Rect(34.9893755865282,138.38442346799087,34.98751925444427,138.3875752046554));
 	var rect7 = new H.map.Rect(new H.geo.Rect(34.991460210557555,138.38765055408493,34.98960355205701,138.39052845390893));
+	var rect8 = new H.map.Rect(new H.geo.Rect(34.98947319463782,138.39071944365048,34.98749269268568,138.39378904581068));
 
 	map.addObject(rect);
 	map.addObject(rect1);
@@ -40,6 +41,7 @@ const map = new H.Map(document.getElementById('map'), omvlayer, {
 	map.addObject(rect5);
 	map.addObject(rect6);
 	map.addObject(rect7);
+	map.addObject(rect8);
 
 // 地図のズームイン・ズームアウトを実装
 const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
